@@ -15,7 +15,6 @@ const registerUser = async (req: Request, res: Response) => {
             data: {
                 user
             }
-
         })
     } catch (error) {
         console.log(error)
