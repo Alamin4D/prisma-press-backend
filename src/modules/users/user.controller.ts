@@ -16,6 +16,7 @@ const registerUser = async (req: Request, res: Response) => {
                 user
             }
         })
+        
     } catch (error) {
         console.log(error)
         res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
