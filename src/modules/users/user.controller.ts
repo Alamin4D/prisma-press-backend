@@ -52,6 +52,7 @@ const getProfile = catchAsync(async (req: Request, res: Response, next: NextFunc
 })
 
 
+
 export const userController = {
     registerUser,
     getProfile
