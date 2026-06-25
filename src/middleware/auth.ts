@@ -59,6 +59,7 @@ const auth = (...requiredRoles: Role[]) => {
         if (user.activeStatus === "SUSPENDED") {
             throw new Error("Your account has been suspended. Please contract support")
         }
+        
 
         req.user = {
             id,
