@@ -21,6 +21,10 @@ const loginUserIntoDB = async (payload: TLoginUser) => {
         where: { email }
     })
 
+    if (user.activeStatus === "SUSPENDED") {
+        throw new Error("Your account has been suspended. Please contract support")
+    }
+
     const isPasswordMatched = await bcrypt.compare(password, user.password);
 
     if (!isPasswordMatched) {
