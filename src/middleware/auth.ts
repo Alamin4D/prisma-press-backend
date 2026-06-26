@@ -60,6 +60,7 @@ const auth = (...requiredRoles: Role[]) => {
             throw new Error("Your account has been suspended. Please contract support")
         }
         
+        
 
         req.user = {
             id,
