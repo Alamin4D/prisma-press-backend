@@ -7,12 +7,12 @@ import httpStatus from "http-status";
 const loginUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const payload = req.body;
 
-    const {accessToken, refreshToken} = await authServices.loginUserIntoDB(payload);
+    const { accessToken, refreshToken } = await authServices.loginUserIntoDB(payload);
 
     res.cookie("accessToken", accessToken, {
         httpOnly: true,
         secure: false,
-        sameSite:"none",
+        sameSite: "none",
         maxAge: 1000 * 60 * 60 * 24 // 2d hour or 1 day
     })
 
@@ -27,10 +27,33 @@ const loginUser = catchAsync(async (req: Request, res: Response, next: NextFunct
         success: true,
         statusCode: httpStatus.OK,
         message: "User login successfully",
-        data : {accessToken, refreshToken}
+        data: { accessToken, refreshToken }
+    })
+})
+
+const refreshToken = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const refreshToken = req.cookies.refreshToken;
+
+    const {accessToken} = await authServices.refreshTokenIntoDB(refreshToken)
+
+    res.cookie("accessToken", accessToken, {
+        httpOnly: true,
+        secure: false,
+        sameSite: "none",
+        maxAge: 1000 * 60 * 60 * 24 // 2d hour or 1 day
+    })
+
+    sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.OK,
+        message: "Token refreshed successfully!",
+        data: {
+            accessToken
+        }
     })
 })
 
 export const authController = {
-    loginUser
+    loginUser,
+    refreshToken
 }
