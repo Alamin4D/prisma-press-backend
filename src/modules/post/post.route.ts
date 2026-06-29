@@ -12,7 +12,7 @@ router.get("/stats", auth(Role.ADMIN), postController.getPostsStats)
 
 router.get("/my-posts", auth(Role.USER, Role.ADMIN), postController.getMyPosts)
 
-router.get("/:id", postController.getPostById)
+router.get("/:postId", postController.getPostById)
 
 router.patch("/:postId", auth(Role.USER, Role.ADMIN), postController.updatePost)
 
