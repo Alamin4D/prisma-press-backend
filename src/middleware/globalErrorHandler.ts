@@ -9,6 +9,7 @@ export const globalErrorHandler = (err: any, req: Request, res: Response, next: 
     let errorMessage = err.message || "Internal Server Error";
     let errorName = err.name || "Internal Server Error";
     // let errorDetails = err.stack
+
     
     
     if(err instanceof Prisma.PrismaClientValidationError){
