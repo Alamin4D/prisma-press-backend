@@ -10,6 +10,7 @@ export const globalErrorHandler = (err: any, req: Request, res: Response, next: 
     let errorName = err.name || "Internal Server Error";
     // let errorDetails = err.stack
     
+    
     if(err instanceof Prisma.PrismaClientValidationError){
         statusCode = httpStatus.BAD_REQUEST;
         errorMessage = "You have provided incorrect field type or missing fields"
