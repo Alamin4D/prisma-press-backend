@@ -68,7 +68,6 @@ const handleWebHook = async (payload: Buffer, signature: string) => {
             await handleChangeSubscription(event.data.object)
             break;
 
-
         /*
         To test this run this command in terminal 
         stripe subscriptions cancel sub_1PsYourSubIdHere (paste existinmg subscribed sub id)
