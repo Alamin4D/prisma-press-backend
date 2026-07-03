@@ -5,6 +5,18 @@ import { ICreatePostPayload, IPostQuery, IUpdatePostPayload } from "./post.inter
 
 
 const createPostInDB = async (payload: ICreatePostPayload, userId: string) => {
+    const user = await prisma.user.findUniqueOrThrow({
+        where: {
+            id: userId
+        },
+        include: {
+            subscription: true
+        }
+    })
+
+    if (payload.isPremium && user.subscription?.status !== "ACTIVE") {
+        throw new Error("You are not a premium user. So You can not create Premium content")
+    }
     const result = await prisma.post.create({
         data: {
             ...payload,
@@ -22,7 +34,7 @@ const getAllPostsFromDB = async (query: IPostQuery) => {
     const skip = (page - 1) * limit;
     const sortBy = query.sortBy ? query.sortBy : "createdAt";
     const sortOrder = query.sortOrder ? query.sortOrder : "desc";
-    
+
     const tags = query.tags ? JSON.parse(query.tags as string) : null
 
     const tagsArray = Array.isArray(tags) ? tags : []
@@ -49,40 +61,45 @@ const getAllPostsFromDB = async (query: IPostQuery) => {
         })
     }
 
-    if(query.title){
+    if (query.title) {
         andConditions.push({
             title: query.title
         })
     }
 
-    if(query.content){
+    if (query.content) {
         andConditions.push({
             content: query.content
         })
     }
-    if(query.authorId){
+    if (query.authorId) {
         andConditions.push({
             authorId: query.authorId
         })
     }
-    if(query.isFeatured){
+    if (query.isFeatured) {
         andConditions.push({
             isFeatured: Boolean(query.isFeatured)
         })
     }
 
-    if(query.tags){
+    if (query.tags) {
         andConditions.push({
             tags: {
                 hasSome: tagsArray
             }
         })
     }
-    if(query.status){
+    if (query.status) {
         andConditions.push({
-            status : query.status
+            status: query.status
         })
     }
+
+    andConditions.push({
+        isPremium: false
+    })
+
     const posts = await prisma.post.findMany({
         // where: {
         //     title : "My fourth Post",
@@ -167,7 +184,21 @@ const getAllPostsFromDB = async (query: IPostQuery) => {
         }
     });
 
-    return posts;
+    const totalPostCount = await prisma.post.count({
+        where: {
+            AND: andConditions
+        }
+    })
+
+    return {
+        data: posts,
+        meta: {
+            page: page,
+            limit: limit,
+            total: totalPostCount,
+            totalPages: Math.ceil(totalPostCount / limit)
+        }
+    }
 }
 
 const getPostStatsFromDB = async () => {
@@ -353,7 +384,7 @@ const getPostByIdFromDB = async (postId: string) => {
         async (tx) => {
             await tx.post.update({
                 where: {
-                    id: postId
+                    id: postId,
                 },
                 data: {
                     views: {
@@ -366,7 +397,8 @@ const getPostByIdFromDB = async (postId: string) => {
 
             const post = await tx.post.findUniqueOrThrow({
                 where: {
-                    id: postId
+                    id: postId,
+                    isPremium: false,
                 },
                 include: {
                     author: {

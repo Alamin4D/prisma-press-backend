@@ -8,6 +8,8 @@ import { postRoutes } from "./modules/post/post.route";
 import { commentRoutes } from "./modules/comment/comment.route";
 import { notFound } from "./middleware/notFound";
 import { globalErrorHandler } from "./middleware/globalErrorHandler";
+import { subscriptionRoutes } from "./modules/subscription/subscription.route";
+import { premiumRoutes } from "./modules/premium/premium.route";
 
 const app: Application = express();
 
@@ -15,6 +17,9 @@ app.use(cors({
     origin: config.app_url,
     credentials: true,
 }))
+
+
+app.use("/api/subscription/webhook", express.raw({type: 'application/json'}))
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -27,7 +32,9 @@ app.get("/", async (req: Request, res: Response) => {
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/posts", postRoutes);
-app.use("/api/comments", commentRoutes)
+app.use("/api/comments", commentRoutes);
+app.use("/api/subscription", subscriptionRoutes);
+app.use("/api/premium", premiumRoutes);
 
 
 app.use(notFound)
