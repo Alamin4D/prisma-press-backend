@@ -99,6 +99,7 @@ const deleteComment = async (commentId: string, authorId: string) => {
 }
 
 
+
 const moderateComment = async (id: string, data: IModerateCommentPayload) => {
     const commentData = await prisma.comment.findUniqueOrThrow({
         where: {
