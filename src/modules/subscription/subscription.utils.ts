@@ -11,6 +11,7 @@ export const getPeriodEnd = (payload: Stripe.Subscription) => {
     return currentPeriodEnd
 }
 
+
 export const handleCheckoutCompleted = async (session: Stripe.Checkout.Session) => {
     const userId = session.metadata?.userId
     const stripeCustomerId = session.customer as string
